@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HesaplaKolay - Ücretsiz Hesaplama Araçları</title>
+<meta name="description" content="Kredi, borç, maaş, kira ve bütçe hesaplama araçları. Ücretsiz ve kolay kullanım.">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#172033}
+header{background:#172033;color:white;padding:28px 18px;text-align:center}
+header h1{margin:0 0 8px;font-size:30px}header p{margin:0;color:#dbe2ef}
+main{max-width:900px;margin:25px auto;padding:0 15px}
+nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+nav button{border:0;background:white;padding:10px 13px;border-radius:10px;cursor:pointer;box-shadow:0 2px 8px #00000010}
+nav button.active{background:#172033;color:white}
+.card{display:none;background:white;padding:22px;border-radius:16px;box-shadow:0 5px 20px #0000000b}
+.card.active{display:block}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{font-weight:bold;font-size:14px;display:block;margin-bottom:6px}
+input{width:100%;padding:12px;border:1px solid #d7dce5;border-radius:9px;font-size:16px}
+button.calc{margin-top:18px;background:#172033;color:white;border:0;padding:13px 18px;border-radius:9px;font-size:16px;cursor:pointer}
+.result{margin-top:18px;padding:16px;background:#eef4ff;border-radius:10px;font-size:18px}
+small{color:#667085}
+@media(max-width:650px){.grid{grid-template-columns:1fr}header h1{font-size:25px}}
+</style>
+</head>
+<body>
+<header><h1>HesaplaKolay</h1><p>Günlük hayat için ücretsiz ve pratik hesaplama araçları</p></header>
+<main>
+<nav>
+<button class="active" onclick="show('kredi',this)">Kredi</button>
+<button onclick="show('borc',this)">Borç</button>
+<button onclick="show('maas',this)">Maaş / Mesai</button>
+<button onclick="show('kira',this)">Kira</button>
+<button onclick="show('butce',this)">Bütçe</button>
+</nav>
+
+<section id="kredi" class="card active">
+<h2>Kredi Taksit Hesaplama</h2><small>Yaklaşık aylık taksiti hesaplayın.</small>
+<div class="grid">
+<div><label>Kredi tutarı (TL)</label><input id="ka" type="number" value="100000"></div>
+<div><label>Aylık faiz (%)</label><input id="kf" type="number" value="3.5" step="0.01"></div>
+<div><label>Vade (ay)</label><input id="kv" type="number" value="24"></div>
+</div>
+<button class="calc" onclick="kredi()">Hesapla</button><div id="kr" class="result"></div>
+</section>
+
+<section id="borc" class="card">
+<h2>Borç Kapatma Hesaplama</h2><small>Aylık ayırabileceğiniz tutara göre yaklaşık süreyi görün.</small>
+<div class="grid">
+<div><label>Toplam borç (TL)</label><input id="ba" type="number" value="100000"></div>
+<div><label>Aylık ödeme (TL)</label><input id="bp" type="number" value="5000"></div>
+<div><label>Aylık ek faiz (%)</label><input id="bf" type="number" value="0" step="0.01"></div>
+</div>
+<button class="calc" onclick="borc()">Hesapla</button><div id="br" class="result"></div>
+</section>
+
+<section id="maas" class="card">
+<h2>Maaş / Mesai Hesaplama</h2>
+<div class="grid">
+<div><label>Aylık net maaş (TL)</label><input id="mm" type="number" value="30000"></div>
+<div><label>Aylık çalışma saati</label><input id="ms" type="number" value="225"></div>
+<div><label>Mesai saati</label><input id="mh" type="number" value="10"></div>
+<div><label>Mesai katsayısı</label><input id="mk" type="number" value="1.5" step="0.1"></div>
+</div>
+<button class="calc" onclick="maas()">Hesapla</button><div id="mr" class="result"></div>
+</section>
+
+<section id="kira" class="card">
+<h2>Kira Artış Hesaplama</h2>
+<div class="grid">
+<div><label>Mevcut kira (TL)</label><input id="ki" type="number" value="10000"></div>
+<div><label>Artış oranı (%)</label><input id="ko" type="number" value="25"></div>
+</div>
+<button class="calc" onclick="kira()">Hesapla</button><div id="kir" class="result"></div>
+</section>
+
+<section id="butce" class="card">
+<h2>Aylık Bütçe Hesaplama</h2>
+<div class="grid">
+<div><label>Aylık gelir (TL)</label><input id="ge" type="number" value="30000"></div>
+<div><label>Kira (TL)</label><input id="gk" type="number" value="10000"></div>
+<div><label>Faturalar (TL)</label><input id="gf" type="number" value="3000"></div>
+<div><label>Gıda (TL)</label><input id="gg" type="number" value="6000"></div>
+<div><label>Borç/taksit (TL)</label><input id="gb" type="number" value="5000"></div>
+<div><label>Diğer giderler (TL)</label><input id="gd" type="number" value="2000"></div>
+</div>
+<button class="calc" onclick="butce()">Hesapla</button><div id="gur" class="result"></div>
+</section>
+</main>
+<script>
+const tl=n=>Number(n||0).toLocaleString('tr-TR',{style:'currency',currency:'TRY',maximumFractionDigits:2});
+function show(id,b){document.querySelectorAll('.card').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active')}
+function kredi(){let P=+ka.value,r=+kf.value/100,n=+kv.value;if(!P||!n){kr.textContent='Bilgileri girin.';return}let a=r?P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1):P/n;kr.innerHTML=`Aylık yaklaşık: <b>${tl(a)}</b><br>Toplam ödeme: <b>${tl(a*n)}</b>`}
+function borc(){let p=+ba.value,a=+bp.value,r=+bf.value/100;if(!p||!a){br.textContent='Bilgileri girin.';return}let n=r?Math.log(a/(a*r+a-p))/Math.log(1+r):a/p;if(!isFinite(n)||n<=0){br.textContent='Bu ödeme tutarı borcu kapatmaya yetmiyor.';return}br.innerHTML=`Yaklaşık <b>${Math.ceil(n)} ay</b> içinde kapanır.<br>Faizsiz varsayımda kalan borç: ${tl(Math.max(0,p*Math.ceil(n)-a))}`}
+function maas(){let m=+mm.value,s=+ms.value,h=+mh.value,k=+mk.value;let saat=m/s,mesai=saat*k*h;mr.innerHTML=`Saatlik yaklaşık ücret: <b>${tl(saat)}</b><br>${h} saat mesainin yaklaşık karşılığı: <b>${tl(mesai)}</b>`}
+function kira(){let k=+ki.value,o=+ko.value/100,n=k*(1+o);kir.innerHTML=`Yeni kira: <b>${tl(n)}</b><br>Artış tutarı: <b>${tl(n-k)}</b>`}
+function butce(){let gelir=+ge.value,gider=[gk,gf,gg,gb,gd].reduce((s,x)=>s+(+x.value||0),0),k=gelir-gider;gur.innerHTML=`Toplam gider: <b>${tl(gider)}</b><br>Aylık kalan: <b>${tl(k)}</b><br>${k>=0?'Bütçeniz artıda.':'Bütçeniz açık veriyor.'}`}
+kredi();
+</script>
+</body></html>
